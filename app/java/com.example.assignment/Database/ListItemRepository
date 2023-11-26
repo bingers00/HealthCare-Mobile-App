@@ -1,0 +1,13 @@
+package com.example.assignment.Database
+
+class ListItemRepository (
+    private val db: ListItemDatabase
+
+){
+    suspend fun insert(list: ListItem) = db.getListDao().insert(list)
+
+
+    suspend fun delete(list: ListItem) = db.getListDao().delete(list)
+
+    fun getAllListItems():List<ListItem> = db.getListDao().getAllListItems()
+}

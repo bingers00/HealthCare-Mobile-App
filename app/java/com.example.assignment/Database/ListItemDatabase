@@ -1,0 +1,28 @@
+package com.example.assignment.Database
+
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+
+@Database(entities = [ListItem::class], version = 1)
+abstract class ListItemDatabase: RoomDatabase() {
+    abstract fun getListDao(): ListItemDao
+
+    companion object{
+        @Volatile
+        private var INSTANCE: ListItemDatabase? = null
+
+        fun getInstance(context: Context): ListItemDatabase{
+            synchronized(this){
+                return INSTANCE?: Room.databaseBuilder(
+                    context,
+                    ListItemDatabase::class.java,
+                    "list_db"
+                ).build().also {
+                    INSTANCE = it
+                }
+            }
+        }
+    }
+}
