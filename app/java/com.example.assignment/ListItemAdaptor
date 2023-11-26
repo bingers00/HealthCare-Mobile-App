@@ -1,0 +1,55 @@
+package com.example.assignment
+
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.recyclerview.widget.RecyclerView.Adapter
+import com.example.assignment.Database.ListItem
+import com.example.assignment.Database.ListItemRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+class ListItemAdapter(items:List<ListItem>, repository: ListItemRepository,
+    viewModel: MainActivty2Data):Adapter<ListItemViewHolder>() {
+
+    var context: Context? = null
+    val items = items
+    val repository = repository
+    val viewModel = viewModel
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListItemViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.view_list,parent,false)
+        context = parent.context
+
+        return ListItemViewHolder(view)
+    }
+
+    override fun getItemCount(): Int {
+        return items.size
+
+    }
+
+    override fun onBindViewHolder(holder: ListItemViewHolder, position: Int) {
+
+        holder.cbList.text = items.get(position).item
+        holder.ivBtn.setOnClickListener {
+            val isChecked = holder.cbList.isChecked
+
+            if (isChecked){
+                CoroutineScope(Dispatchers.IO).launch {
+                    repository.delete(items.get(position))
+                    val data = repository.getAllListItems()
+                    withContext(Dispatchers.Main){
+                        viewModel.setData(items)
+                    }
+                }
+            } else {
+                Toast.makeText(context,"Select the item to be deleted", Toast.LENGTH_LONG).show()
+            }
+        }
+
+    }
+}

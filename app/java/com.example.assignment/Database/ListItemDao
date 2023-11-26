@@ -1,0 +1,23 @@
+package com.example.assignment.Database
+
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+
+@Dao
+interface ListItemDao {
+
+    @Insert
+    suspend fun insert(listItem: ListItem)
+
+    @Delete
+    suspend fun delete(listItem: ListItem)
+
+    @Query("SELECT * FROM ListItem")
+    fun getAllListItems():List<ListItem>
+
+    @Query("SELECT * FROM ListItem WHERE id=:id")
+    fun getOne(id: Int): ListItem
+
+}

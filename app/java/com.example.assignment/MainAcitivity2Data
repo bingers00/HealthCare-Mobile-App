@@ -1,0 +1,22 @@
+package com.example.assignment
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.example.assignment.Database.ListItem
+
+class MainActivty2Data: ViewModel() {
+    private val _data = MutableLiveData<List<ListItem>>()
+
+    val data: LiveData<List<ListItem>> = _data
+
+    fun setData(data: List<ListItem>){
+        _data.value = data
+    }
+
+    fun addData(item: ListItem) {
+        val currentData = _data.value ?: emptyList()
+        _data.value = currentData + listOf(item)
+    }
+
+}

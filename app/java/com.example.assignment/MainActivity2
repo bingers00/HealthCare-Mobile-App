@@ -1,0 +1,84 @@
+package com.example.assignment
+
+import android.os.Bundle
+import android.text.InputType
+import android.widget.Button
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.assignment.Database.ListItem
+import com.example.assignment.Database.ListItemDatabase
+import com.example.assignment.Database.ListItemRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+class MainActivity2 : AppCompatActivity() {
+
+    private lateinit var adapter: ListItemAdapter
+    private lateinit var viewModel:MainActivty2Data
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main2)
+
+        val recyclerView:RecyclerView = findViewById(R.id.rvList)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.addItemDecoration(ItemSpacingDecoration())
+        val repository = ListItemRepository(ListItemDatabase.getInstance(this))
+
+        viewModel = ViewModelProvider(this)[MainActivty2Data::class.java]
+
+        viewModel.data.observe(this){
+            adapter = ListItemAdapter(it,repository,viewModel)
+            recyclerView.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(this)
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val data = repository.getAllListItems()
+
+            runOnUiThread {
+                viewModel.setData(data)
+            }
+        }
+
+        val addItem: Button = findViewById(R.id.addBtn)
+
+        addItem.setOnClickListener {
+            displayAlert(repository)
+        }
+
+    }
+
+    private fun displayAlert(repository: ListItemRepository){
+        val builder = AlertDialog.Builder(this)
+
+        builder.setTitle("Enter items")
+        builder.setMessage("Enter list here:")
+
+        val input = EditText(this)
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        builder.setView(input)
+
+        builder.setPositiveButton("ok"){dialog,which ->
+            val item = input.text.toString()
+            CoroutineScope(Dispatchers.IO).launch {
+                repository.insert(ListItem(item))
+                val data = repository.getAllListItems()
+                runOnUiThread{
+                    viewModel.addData(ListItem(item))
+                }
+            }
+        }
+
+        builder.setNegativeButton("cancel"){dialog,which ->
+            dialog.cancel()
+        }
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+}
