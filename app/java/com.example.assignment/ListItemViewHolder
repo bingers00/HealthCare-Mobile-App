@@ -1,0 +1,12 @@
+package com.example.assignment
+
+import android.view.View
+import android.widget.CheckBox
+import android.widget.ImageView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+
+class ListItemViewHolder(view: View):ViewHolder(view) {
+
+    val cbList: CheckBox = view.findViewById(R.id.cbList)
+    val ivBtn: ImageView = view.findViewById(R.id.ivBtn)
+}

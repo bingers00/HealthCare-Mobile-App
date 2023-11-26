@@ -1,0 +1,58 @@
+package com.example.assignment
+
+import android.content.Intent
+import android.os.Bundle
+import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
+
+
+class MainActivity : AppCompatActivity() {
+
+    private val homeFragment = HomeFragment()
+    private val addApointmnetFragment = AddApointmnetFragment()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        val homeBtn: Button = findViewById(R.id.homeBtn)
+        val settingsBtn: Button = findViewById(R.id.settingsBtn)
+        val appoinmentBtn: Button = findViewById(R.id.appoinmentBtn)
+
+        homeBtn.setOnClickListener {
+            loadHome()
+        }
+
+        settingsBtn.setOnClickListener {
+            loadSettings()
+        }
+
+        appoinmentBtn.setOnClickListener {
+            val intent = Intent(this, MainActivity2::class.java)
+            startActivity(intent)
+        }
+
+    }
+
+    private fun loadHome(){
+        val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+
+        if (fragment == null){
+            supportFragmentManager.beginTransaction().add(R.id.fragmentContainer,homeFragment).commit()
+        } else {
+            supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer,homeFragment).commit()
+        }
+    }
+
+    private fun loadSettings(){
+        val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+
+        if (fragment == null){
+            supportFragmentManager.beginTransaction().add(R.id.fragmentContainer,addApointmnetFragment).commit()
+        } else {
+            supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer,addApointmnetFragment).commit()
+        }
+    }
+
+
+}
